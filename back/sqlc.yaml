@@ -1,0 +1,14 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "./migrations"
+    queries: "./internal/pet/infra/persist/queries/pet.sql"
+    gen:
+      go:
+        package: "querier"
+        out: "./internal/pet/infra/persist/pet"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
+
