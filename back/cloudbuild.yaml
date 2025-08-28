@@ -1,3 +1,33 @@
+substitutions:
+  _API_IMAGE: us-east1-docker.pkg.dev/$PROJECT_ID/open-adoption/api:$COMMIT_SHA
+
+images:
+  - "${_API_IMAGE}"
+
 steps:
   - name: "migrate/migrate"
     args: ["-path", "/workspace/migrations", "-database", "$DB_URL", "up"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build",  "--build-arg", "PROJECT_ID=$PROJECT_ID",  "-t", "${_API_IMAGE}",  "."]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${_API_IMAGE}"]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    args:
+      [
+        "gcloud", "run", "deploy", "api",
+        "--image", "${_API_IMAGE}",
+        "--region", "us-east1",
+        "--cpu", "${_CPUS}",
+        "--memory", "${_MEMORY}",
+        "--min-instances", "${_MIN_INSTANCES}",
+        "--max-instances", "${_MAX_INSTANCES}",
+        "--port", "80",
+        "--allow-unauthenticated",
+        "--vpc-connector", "${_VPC_CONNECTOR}",
+        "--vpc-egress", "${_EGRESS}",
+        "--platform", "managed",
+        "--set-env-vars"
+      ]

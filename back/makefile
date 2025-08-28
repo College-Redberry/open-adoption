@@ -4,6 +4,12 @@ ifneq (,$(wildcard .env))
 	export $(shell sed 's/=.*//' .env)
 endif
 
+run:
+	go run cmd/rest/main.go
+
+test:
+	go test ./...
+
 migrate:
 	@echo "Running migrations using Docker..."
 	@echo "DB_URL=$(DB_URL)"
