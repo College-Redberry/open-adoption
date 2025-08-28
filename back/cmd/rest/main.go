@@ -8,15 +8,20 @@ import (
 	"github.com/college-redberry/open-adoption/cmd/rest/bootstrap"
 	authDi "github.com/college-redberry/open-adoption/internal/auth/di"
 	authRoutes "github.com/college-redberry/open-adoption/internal/auth/infra/rest"
+	petDi "github.com/college-redberry/open-adoption/internal/pet/di"
+	petRoutes "github.com/college-redberry/open-adoption/internal/pet/infra/rest"
 )
 
 func main() {
 	authContainer := authDi.Initialize()
 	authRoutes := authRoutes.Initialize(*authContainer)
 
+	petContainer := petDi.Initialize()
+	petRoutes := petRoutes.Initialize(*petContainer)
+
 	routesV1 := bootstrap.Route{
 		Path:     "/v1",
-		Children: slices.Concat(authRoutes),
+		Children: slices.Concat(authRoutes, petRoutes),
 	}
 
 	router := bootstrap.Bootstrap(routesV1, authContainer.AuthService)
