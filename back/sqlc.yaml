@@ -2,6 +2,18 @@ version: "2"
 sql:
   - engine: "postgresql"
     schema: "./migrations"
+    queries: "./internal/auth/infra/persist/queries"
+    gen:
+      go:
+        package: "querier"
+        out: "./internal/auth/infra/persist/user"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
+
+  - engine: "postgresql"
+    schema: "./migrations"
     queries: "./internal/pet/infra/persist/queries/pet.sql"
     gen:
       go:
