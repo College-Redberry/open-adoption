@@ -1,0 +1,32 @@
+  version: '3.9'
+
+  services:
+    db:
+      image: postgres:17
+      restart: always
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: mydb
+      ports:
+        - "5432:5432"
+      volumes:
+        - open-adoption-db:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    migrate:
+      image: migrate/migrate
+      volumes:
+        - ./back/migrations:/migrations:ro,Z
+      environment:
+        DB_URL: postgres://postgres:postgres@db:5432/mydb?sslmode=disable
+      entrypoint: ["sh", "-c", "migrate -source=file://migrations -database '${DB_URL}' up"]
+      depends_on:
+        - db
+
+  volumes:
+    open-adoption-db:
