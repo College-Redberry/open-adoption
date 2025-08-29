@@ -54,6 +54,48 @@ func (ns NullPetGender) Value() (driver.Value, error) {
 	return string(ns.PetGender), nil
 }
 
+type PropertyType string
+
+const (
+	PropertyTypeHouse     PropertyType = "house"
+	PropertyTypeApartment PropertyType = "apartment"
+)
+
+func (e *PropertyType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PropertyType(s)
+	case string:
+		*e = PropertyType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PropertyType: %T", src)
+	}
+	return nil
+}
+
+type NullPropertyType struct {
+	PropertyType PropertyType
+	Valid        bool // Valid is true if PropertyType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPropertyType) Scan(value interface{}) error {
+	if value == nil {
+		ns.PropertyType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PropertyType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPropertyType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PropertyType), nil
+}
+
 type AccountUser struct {
 	ID        uuid.UUID
 	FirstName string
@@ -64,13 +106,24 @@ type AccountUser struct {
 	UpdatedAt pgtype.Timestamp
 }
 
-type PetsAdoptionForm struct {
-	ID        uuid.UUID
-	PetID     uuid.UUID
-	Name      string
-	Email     string
-	Phone     string
-	CreatedAt pgtype.Timestamptz
+type AdoptionRequest struct {
+	ID                                uuid.UUID
+	PetID                             uuid.UUID
+	Name                              string
+	Email                             string
+	Phone                             string
+	ApprovedAt                        pgtype.Timestamptz
+	Age                               int32
+	HouseHoldAgreed                   bool
+	Alreadypets                       int32
+	AlreadyPetsCastratedAndVaccinated bool
+	Property                          PropertyType
+	OwnProperty                       bool
+	Address                           string
+	Income                            int32
+	SuitableLocation                  string
+	AccessToTheStreet                 pgtype.Bool
+	CreatedAt                         pgtype.Timestamptz
 }
 
 type PetsPet struct {
