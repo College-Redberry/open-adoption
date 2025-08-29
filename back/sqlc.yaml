@@ -24,3 +24,14 @@ sql:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
 
+  - engine: "postgresql"
+    schema: "./migrations"
+    queries: "./internal/adoption/infra/persist/queries/request.sql"
+    gen:
+      go:
+        package: "querier"
+        out: "./internal/adoption/infra/persist/request"
+        sql_package: "pgx/v5"
+        overrides:
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
