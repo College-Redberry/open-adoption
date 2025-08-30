@@ -32,3 +32,8 @@ ORDER BY name;
 SELECT url
 FROM pets.pet_images
 WHERE pet_id = $1;
+
+-- name: InsertPetImages :exec
+INSERT INTO pets.pet_images (id, pet_id, url)
+SELECT gen_random_uuid(), $1, url
+FROM unnest($2::text[]) AS url;

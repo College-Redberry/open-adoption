@@ -99,11 +99,18 @@ func (repo *PetRepo) List() ([]pet.Pet, error) {
 	return pets, nil
 }
 
-func (repo *PetRepo) ListImagesBtId(id string) ([]string, error) {
+func (repo *PetRepo) ListImagesById(id string) ([]string, error) {
 	results, err := repo.querier.ListImagesById(context.Background(), pgtype.UUID{Bytes: uuid.MustParse(id), Valid: true})
 	if err != nil {
 		return nil, err
 	}
 
 	return results, nil
+}
+
+func (repo *PetRepo) SaveImagesById(id string, images []string) error {
+	return repo.querier.InsertPetImages(context.Background(), querier.InsertPetImagesParams{
+		PetID:   pgtype.UUID{Bytes: uuid.MustParse(id), Valid: true},
+		Column2: images,
+	})
 }

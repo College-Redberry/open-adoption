@@ -72,6 +72,22 @@ func (q *Queries) GetPetById(ctx context.Context, id uuid.UUID) (PetsPet, error)
 	return i, err
 }
 
+const insertPetImages = `-- name: InsertPetImages :exec
+INSERT INTO pets.pet_images (id, pet_id, url)
+SELECT gen_random_uuid(), $1, url
+FROM unnest($2::text[]) AS url
+`
+
+type InsertPetImagesParams struct {
+	PetID   pgtype.UUID
+	Column2 []string
+}
+
+func (q *Queries) InsertPetImages(ctx context.Context, arg InsertPetImagesParams) error {
+	_, err := q.db.Exec(ctx, insertPetImages, arg.PetID, arg.Column2)
+	return err
+}
+
 const listImagesById = `-- name: ListImagesById :many
 SELECT url
 FROM pets.pet_images

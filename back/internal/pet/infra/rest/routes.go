@@ -34,6 +34,12 @@ func Initialize(container di.Container) []bootstrap.Route {
 					RequireAuth: true,
 					Controller:  container.UpdateController.Handle,
 				},
+				{
+					Path:        "/{id}/images",
+					Method:      http.MethodPost,
+					RequireAuth: true,
+					Controller:  container.SaveImagesController.Handle,
+				},
 			},
 		},
 	}

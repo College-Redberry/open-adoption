@@ -6,5 +6,6 @@ type PetRepo interface {
 	AdoptById(id string) error
 	GetByID(id string) (Pet, error)
 	List() ([]Pet, error)
-	ListImagesBtId(id string) ([]string, error)
+	ListImagesById(id string) ([]string, error)
+	SaveImagesById(id string, images []string) error
 }
