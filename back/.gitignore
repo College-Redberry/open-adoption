@@ -31,4 +31,4 @@ go.work.sum
 # .idea/
 .vscode/
 
-google_application_credentials.json.json
+google_application_credentials.json

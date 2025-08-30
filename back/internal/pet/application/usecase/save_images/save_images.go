@@ -22,7 +22,7 @@ func New(petRepo pet.PetRepo, storageService service.Storage) *Aprove {
 }
 
 func (usecase *Aprove) Execute(input Input) error {
-	fileNames := []string{}
+	fileNames := make([]string, len(input.Images))
 
 	for index, image := range input.Images {
 		fileName := uuid.Must(uuid.NewUUID())
