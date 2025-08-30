@@ -7,6 +7,10 @@ images:
 steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace"]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    args:
       ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace"]
 
   - name: "migrate/migrate"

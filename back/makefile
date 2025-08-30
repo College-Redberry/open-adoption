@@ -31,3 +31,6 @@ create-migration:
 		migrate/migrate \
 		create -ext=sql -dir=migrations \
 		-seq init 
+
+gen-private:
+	openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048

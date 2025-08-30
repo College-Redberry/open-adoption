@@ -7,14 +7,16 @@ import (
 )
 
 type Register struct {
-	userRepo    user.UserRepo
-	hashService service.HashService
+	userRepo       user.UserRepo
+	hashService    service.HashService
+	encryptService service.EncryptService
 }
 
-func New(userRepo user.UserRepo, hashService service.HashService) *Register {
+func New(userRepo user.UserRepo, hashService service.HashService, encryptService service.EncryptService) *Register {
 	return &Register{
-		userRepo:    userRepo,
-		hashService: hashService,
+		userRepo:       userRepo,
+		hashService:    hashService,
+		encryptService: encryptService,
 	}
 }
 
@@ -23,6 +25,12 @@ func (usecase *Register) Execute(input Input) (Output, error) {
 	if err != nil {
 		return Output{}, err
 	}
+
+	decryptedPassword, err := usecase.encryptService.Decrypt([]byte(input.Password))
+	if err != nil {
+		return Output{}, err
+	}
+	input.Password = string(decryptedPassword)
 
 	err = user.Password(input.Password).Validate()
 	if err != nil {

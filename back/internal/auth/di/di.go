@@ -17,6 +17,7 @@ import (
 	"github.com/college-redberry/open-adoption/internal/auth/infra/rest/controller/register"
 	"github.com/college-redberry/open-adoption/internal/auth/infra/rest/controller/retrieve"
 	"github.com/college-redberry/open-adoption/internal/auth/infra/service/auth"
+	"github.com/college-redberry/open-adoption/internal/auth/infra/service/encrypt"
 	"github.com/college-redberry/open-adoption/internal/auth/infra/service/hash"
 )
 
@@ -40,9 +41,10 @@ func Initialize() *Container {
 	db := persist.Connect()
 	hashService := hash.New()
 	userRepo := user.New(db)
+	encryptService := encrypt.New()
 
 	loginUC := loginUsecase.New(userRepo, authService, hashService)
-	registerUC := registerUsecase.New(userRepo, hashService)
+	registerUC := registerUsecase.New(userRepo, hashService, encryptService)
 	retrieveUC := retrieveUsecase.New(userRepo)
 	refreshUC := refreshUsecase.New(userRepo, authService)
 
