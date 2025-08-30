@@ -6,8 +6,8 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/back/cmd/rest",
-            "envFile": "${workspaceFolder}/back/.env",
+            "program": "${workspaceFolder}/src/cmd/rest",
+            "envFile": "${workspaceFolder}/src/.env",
         }
     ]
 }

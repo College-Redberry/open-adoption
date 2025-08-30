@@ -20,7 +20,7 @@
 
     api:
       build:
-        context: ./back
+        context: ./src
         dockerfile: ./cmd/rest/Dockerfile
       restart: always
       environment:
@@ -37,7 +37,7 @@
     migrate:
       image: migrate/migrate
       volumes:
-        - ./back/migrations:/migrations:ro,Z
+        - ./src/migrations:/migrations:ro,Z
       environment:
         DB_URL: postgres://postgres:postgres@db:5432/mydb?sslmode=disable
       entrypoint: ["sh", "-c", "migrate -source=file://migrations -database '${DB_URL}' up"]
