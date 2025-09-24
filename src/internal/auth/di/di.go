@@ -43,7 +43,7 @@ func Initialize() *Container {
 	userRepo := user.New(db)
 	encryptService := encrypt.New()
 
-	loginUC := loginUsecase.New(userRepo, authService, hashService)
+	loginUC := loginUsecase.New(userRepo, authService, hashService, encryptService)
 	registerUC := registerUsecase.New(userRepo, hashService, encryptService)
 	retrieveUC := retrieveUsecase.New(userRepo)
 	refreshUC := refreshUsecase.New(userRepo, authService)
