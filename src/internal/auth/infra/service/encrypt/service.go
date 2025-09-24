@@ -3,10 +3,11 @@ package encrypt
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 type EncryptService struct{}
@@ -16,22 +17,33 @@ func New() *EncryptService {
 }
 
 func (service *EncryptService) Decrypt(ciphertext []byte) ([]byte, error) {
-	privKeyBytes, err := ioutil.ReadFile("private.pem")
+	privKeyBytes, err := os.ReadFile("../../private.pem")
 	if err != nil {
 		return nil, fmt.Errorf("failed to read private key file: %v", err)
 	}
 
 	block, _ := pem.Decode(privKeyBytes)
-	if block == nil || block.Type != "RSA PRIVATE KEY" {
-		return nil, fmt.Errorf("failed to decode PEM block containing private key")
+	if block == nil {
+		return nil, fmt.Errorf("failed to decode PEM block")
 	}
 
-	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	privKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse private key: %v", err)
 	}
 
-	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privKey, ciphertext)
+	rsaPrivKey, ok := privKey.(*rsa.PrivateKey)
+	if !ok {
+		return nil, fmt.Errorf("not an RSA private key")
+	}
+
+	plaintext, err := rsa.DecryptOAEP(
+		sha256.New(),
+		rand.Reader,
+		rsaPrivKey,
+		ciphertext,
+		nil,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt data: %v", err)
 	}
