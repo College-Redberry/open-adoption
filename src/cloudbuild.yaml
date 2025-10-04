@@ -20,7 +20,13 @@ steps:
       ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace/src"]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build",  "--build-arg", "PROJECT_ID=${PROJECT_ID}",  "-t", "${_API_IMAGE}", "-f", "src/cmd/rest/Dockerfile", "src"]
+    args: [
+      "build",  
+      "--build-arg", "PROJECT_ID=${PROJECT_ID}",  
+      "-t", "${_API_IMAGE}", 
+      "-f", "src/cmd/rest/Dockerfile", 
+      "src"
+    ]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_API_IMAGE}"]
@@ -38,5 +44,5 @@ steps:
         "--port", "80",
         "--allow-unauthenticated",
         "--platform", "managed",
-        "--set-env-vars"
+        "--build-env-vars-file", ".env"
       ]
