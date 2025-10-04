@@ -20,7 +20,7 @@ steps:
       ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace/src"]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build",  "--build-arg", "PROJECT_ID=${PROJECT_ID}",  "-t", "${_API_IMAGE}",  "src/cmd/rest/Dockerfile"]
+    args: ["build",  "--build-arg", "PROJECT_ID=${PROJECT_ID}",  "-t", "${_API_IMAGE}",  "src/cmd/rest"]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_API_IMAGE}"]
