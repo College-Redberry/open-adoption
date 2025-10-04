@@ -9,8 +9,8 @@ options:
 
 steps:
   - name: "migrate/migrate"
-    args: ["-path", "/workspace/src/migrations", "-database", "$_DB_URL", "up"]
-    
+    args: ["-path", "/workspace/src/migrations", "-database", "${_DB_URL}", "up"]
+
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
       ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace/src"]
@@ -37,8 +37,6 @@ steps:
         "--max-instances", "${_MAX_INSTANCES}",
         "--port", "80",
         "--allow-unauthenticated",
-        "--vpc-connector", "${_VPC_CONNECTOR}",
-        "--vpc-egress", "${_EGRESS}",
         "--platform", "managed",
         "--set-env-vars"
       ]
