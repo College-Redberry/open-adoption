@@ -8,8 +8,8 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: "migrate/migrate"
-    args: ["-path", "/workspace/src/migrations", "-database", "${_DB_URL}", "up"]
+  # - name: "migrate/migrate"
+  #   args: ["-path", "/workspace/src/migrations", "-database", "${_DB_URL}", "up"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
