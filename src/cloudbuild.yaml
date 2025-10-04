@@ -10,14 +10,14 @@ options:
 steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
-      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace"]
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace/src"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
-      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace"]
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace/src"]
 
   - name: "migrate/migrate"
-    args: ["-path", "/workspace/migrations", "-database", "$_DB_URL", "up"]
+    args: ["-path", "/workspace/src/migrations", "-database", "$_DB_URL", "up"]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["build",  "--build-arg", "PROJECT_ID=${PROJECT_ID}",  "-t", "${_API_IMAGE}",  "."]
