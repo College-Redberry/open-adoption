@@ -10,10 +10,11 @@ options:
 steps:
   - name: gcr.io/cloudsql-docker/gce-proxy:1.33.2
     entrypoint: /cloud_sql_proxy
-    args: ["-instances", "${PROJECT_ID}:us-east1:open-adoption=tcp:5432"]
+    args:
+      - "-instances=${PROJECT_ID}:us-east1:open-adoption=tcp:5432"
     
-  - name: "migrate/migrate"
-    args: ["-path", "/workspace/src/migrations", "-database", "${_DB_URL}", "up"]
+  # - name: "migrate/migrate"
+  #   args: ["-path", "/workspace/src/migrations", "-database", "${_DB_URL}", "up"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
