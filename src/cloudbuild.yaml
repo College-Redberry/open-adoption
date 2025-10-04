@@ -14,12 +14,11 @@ steps:
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
-      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace/src"]
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/env.yaml", "/workspace/src"]
 
   - name: "gcr.io/cloud-builders/docker"
     args: [
       "build",  
-      "--env-file", "/workspace/src/.env",
       "--build-arg", "PROJECT_ID=${PROJECT_ID}",  
       "-t", "${_API_IMAGE}", 
       "-f", "src/cmd/rest/Dockerfile", 
@@ -41,5 +40,6 @@ steps:
         "--max-instances", "${_MAX_INSTANCES}",
         "--port", "80",
         "--allow-unauthenticated",
-        "--platform", "managed"
+        "--platform", "managed",
+        "--build-env-vars-file", "/workspace/src/env.yaml"
       ]
