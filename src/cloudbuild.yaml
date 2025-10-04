@@ -1,5 +1,5 @@
 substitutions:
-  _API_IMAGE: us-east1-docker.pkg.dev/$PROJECT_ID/open-adoption/api:$COMMIT_SHA
+  _API_IMAGE: us-east1-docker.pkg.dev/${PROJECT_ID}/open-adoption/api:${COMMIT_SHA}
 
 images:
   - "${_API_IMAGE}"
@@ -20,7 +20,7 @@ steps:
     args: ["-path", "/workspace/migrations", "-database", "$_DB_URL", "up"]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build",  "--build-arg", "PROJECT_ID=$PROJECT_ID",  "-t", "${_API_IMAGE}",  "."]
+    args: ["build",  "--build-arg", "PROJECT_ID=${PROJECT_ID}",  "-t", "${_API_IMAGE}",  "."]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_API_IMAGE}"]
