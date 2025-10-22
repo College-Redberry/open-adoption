@@ -1,5 +1,5 @@
 substitutions:
-  _API_IMAGE: us-east1-docker.pkg.dev/$PROJECT_ID/open-adoption/api:$COMMIT_SHA
+  _API_IMAGE: us-east1-docker.pkg.dev/${PROJECT_ID}/open-adoption/api:${COMMIT_SHA}
 
 images:
   - "${_API_IMAGE}"
@@ -10,14 +10,20 @@ options:
 steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
-      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace"]
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/private.pem", "/workspace/src"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
       ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/env.yaml", "/workspace/src"]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build",  "--build-arg", "PROJECT_ID=$PROJECT_ID",  "-t", "${_API_IMAGE}",  "."]
+    args: [
+      "build",  
+      "--build-arg", "PROJECT_ID=${PROJECT_ID}",  
+      "-t", "${_API_IMAGE}", 
+      "-f", "src/cmd/rest/Dockerfile", 
+      "src"
+    ]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_API_IMAGE}"]
