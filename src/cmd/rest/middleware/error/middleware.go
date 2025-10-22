@@ -23,6 +23,8 @@ func (m *Middleware) Handle(next middleware.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		fmt.Println(err.Error())
+
 		status := http.StatusInternalServerError
 		message := errs.ErrInternal.Error()
 
@@ -45,8 +47,6 @@ func (m *Middleware) Handle(next middleware.HandlerFunc) http.HandlerFunc {
 				message = domainErr.Error()
 			}
 		}
-
-		fmt.Println(err.Error())
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
