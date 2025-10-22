@@ -4,6 +4,9 @@ substitutions:
 images:
   - "${_API_IMAGE}"
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
@@ -31,8 +34,6 @@ steps:
         "--max-instances", "${_MAX_INSTANCES}",
         "--port", "80",
         "--allow-unauthenticated",
-        "--vpc-connector", "${_VPC_CONNECTOR}",
-        "--vpc-egress", "${_EGRESS}",
         "--platform", "managed",
         "--env-vars-file", "/workspace/src/env.yaml"
       ]
