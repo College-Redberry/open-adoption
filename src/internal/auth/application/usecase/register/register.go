@@ -1,6 +1,8 @@
 package register
 
 import (
+	"encoding/base64"
+
 	"github.com/college-redberry/open-adoption/internal/auth/application/service"
 	errs "github.com/college-redberry/open-adoption/internal/auth/domain/error"
 	"github.com/college-redberry/open-adoption/internal/auth/domain/user"
@@ -26,7 +28,12 @@ func (usecase *Register) Execute(input Input) (Output, error) {
 		return Output{}, err
 	}
 
-	decryptedPassword, err := usecase.encryptService.Decrypt([]byte(input.Password))
+	decodedPassword, err := base64.StdEncoding.DecodeString(input.Password)
+	if err != nil {
+		return Output{}, err
+	}
+
+	decryptedPassword, err := usecase.encryptService.Decrypt(decodedPassword)
 	if err != nil {
 		return Output{}, err
 	}
