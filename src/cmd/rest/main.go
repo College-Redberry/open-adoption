@@ -31,6 +31,6 @@ func main() {
 
 	router := bootstrap.Bootstrap(routesV1, authContainer.AuthService)
 
-	log.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", router)
+	log.Println("Starting server on :80")
+	http.ListenAndServe(":80", router)
 }
