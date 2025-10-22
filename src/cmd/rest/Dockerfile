@@ -14,6 +14,9 @@ FROM gcr.io/distroless/base-debian11 AS build-release-stage
 
 WORKDIR /
 
+COPY private.pem private.pem
+COPY migrations migrations
+
 COPY --from=build-stage /api /api
 
 EXPOSE 80
