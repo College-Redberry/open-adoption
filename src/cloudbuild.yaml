@@ -11,10 +11,7 @@ steps:
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
-      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/.env", "/workspace"]
-
-  - name: "migrate/migrate"
-    args: ["-path", "/workspace/migrations", "-database", "$DB_URL", "up"]
+      ["gsutil", "cp", "gs://${_STORAGE_BUCKET}/api/env.yaml", "/workspace/src"]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["build",  "--build-arg", "PROJECT_ID=$PROJECT_ID",  "-t", "${_API_IMAGE}",  "."]
@@ -37,5 +34,5 @@ steps:
         "--vpc-connector", "${_VPC_CONNECTOR}",
         "--vpc-egress", "${_EGRESS}",
         "--platform", "managed",
-        "--set-env-vars"
+        "--env-vars-file", "/workspace/src/env.yaml"
       ]
