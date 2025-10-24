@@ -33,6 +33,7 @@ func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
 			Age:      pet.Age,
 			Gender:   pet.Gender,
 			IsAdoped: pet.IsAdoped,
+			Images:   pet.Images,
 		})
 	}
 

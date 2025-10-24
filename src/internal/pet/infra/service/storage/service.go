@@ -1,10 +1,8 @@
 package storage
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -45,20 +43,11 @@ func (s *GCPStorageService) UploadFile(objectName string, data []byte) error {
 	return nil
 }
 
-func (s *GCPStorageService) DownloadFile(objectName string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	rc, err := s.client.Bucket(s.bucketName).Object(objectName).NewReader(ctx)
+func (s *GCPStorageService) GenerateUrl(objectName string) (string, error) {
+	url, err := storage.SignedURL(s.bucketName, objectName, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create reader: %w", err)
-	}
-	defer rc.Close()
-
-	buf := new(bytes.Buffer)
-	if _, err := io.Copy(buf, rc); err != nil {
-		return nil, fmt.Errorf("failed to read data: %w", err)
+		return "", fmt.Errorf("failed to generate signed URL: %w", err)
 	}
 
-	return buf.Bytes(), nil
+	return url, nil
 }

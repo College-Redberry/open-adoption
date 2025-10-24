@@ -31,7 +31,7 @@ func Initialize() *Container {
 	storageService := storage.New()
 
 	adoptUc := adoptUC.New(petRepo)
-	listUc := listUC.New(petRepo)
+	listUc := listUC.New(petRepo, storageService)
 	registerUc := registerUC.New(petRepo)
 	updateUc := updateUC.New(petRepo)
 	saveimagesUc := saveImagesUC.New(petRepo, storageService)
