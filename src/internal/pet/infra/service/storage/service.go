@@ -44,9 +44,15 @@ func (s *GCPStorageService) UploadFile(objectName string, data []byte) error {
 }
 
 func (s *GCPStorageService) GenerateUrl(objectName string) (string, error) {
-	url, err := storage.SignedURL(s.bucketName, objectName, nil)
+	opts := &storage.SignedURLOptions{
+		Scheme:  storage.SigningSchemeV4,
+		Method:  "GET",
+		Expires: time.Now().Add(1 * time.Hour),
+	}
+
+	url, err := s.client.Bucket(s.bucketName).SignedURL(fmt.Sprintf("%s/%s", constants.GCP_BUCKET_IMAGES_FOLDER, objectName), opts)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate signed URL: %w", err)
+		return "", fmt.Errorf("Bucket(%q).SignedURL: %w", s.bucketName, err)
 	}
 
 	return url, nil

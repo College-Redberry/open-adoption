@@ -3,12 +3,15 @@ package middleware
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/college-redberry/open-adoption/cmd/rest/middleware"
 	errs "github.com/college-redberry/open-adoption/internal/auth/domain/error"
 )
+
+var logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 type Middleware struct{}
 
@@ -23,13 +26,13 @@ func (m *Middleware) Handle(next middleware.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println(err.Error())
-
 		status := http.StatusInternalServerError
 		message := errs.ErrInternal.Error()
 
 		var domainErr *errs.DomainError
 		if errors.As(err, &domainErr) {
+			logger.Error("%s: %s", err.Error(), domainErr.Unwrap().Error())
+
 			switch domainErr {
 			case errs.ErrNotAuthorized:
 				status = http.StatusUnauthorized
@@ -46,6 +49,8 @@ func (m *Middleware) Handle(next middleware.HandlerFunc) http.HandlerFunc {
 			default:
 				message = domainErr.Error()
 			}
+		} else {
+			logger.Error(err.Error())
 		}
 
 		w.Header().Set("Content-Type", "application/json")
