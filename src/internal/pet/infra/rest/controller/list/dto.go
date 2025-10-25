@@ -1,6 +1,9 @@
 package list
 
-type Output []Pet
+type Output struct {
+	Data  []Pet `json:"data"`
+	Count int   `json:"count"`
+}
 
 type Pet struct {
 	ID       string   `json:"id"`
