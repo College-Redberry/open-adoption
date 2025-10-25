@@ -3,11 +3,11 @@ package list
 type Output []Pet
 
 type Pet struct {
-	ID       string
-	Name     string
-	Breed    string
-	Age      string
-	Gender   string
-	IsAdoped bool
-	Images   []string
+	ID       string   `json:"id"`
+	Name     string   `json:"name"`
+	Breed    string   `json:"breed"`
+	Age      string   `json:"age"`
+	Gender   string   `json:"gender"`
+	IsAdoped bool     `json:"is_adoped"`
+	Images   []string `json:"images"`
 }
