@@ -24,17 +24,21 @@ func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	output := make([]Pet, len(result))
-	for _, pet := range result {
-		output = append(output, Pet{
-			ID:       pet.ID,
-			Name:     pet.Name,
-			Breed:    pet.Breed,
-			Age:      pet.Age,
-			Gender:   pet.Gender,
-			IsAdoped: pet.IsAdoped,
-			Images:   pet.Images,
-		})
+	output := Output{
+		Count: len(result),
+		Data:  make([]Pet, len(result)),
+	}
+
+	for i, pet := range result {
+		output.Data[i] = Pet{
+			ID:        pet.ID,
+			Name:      pet.Name,
+			Breed:     pet.Breed,
+			Age:       pet.Age,
+			Gender:    pet.Gender,
+			IsAdopted: pet.IsAdoped,
+			Images:    pet.Images,
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)

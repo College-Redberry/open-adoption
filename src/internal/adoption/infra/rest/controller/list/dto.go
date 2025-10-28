@@ -2,7 +2,10 @@ package list
 
 import "time"
 
-type Output []Request
+type Output struct {
+	Data  []Request `json:"data"`
+	Count int       `json:"count"`
+}
 
 type Request struct {
 	ID                                string    `json:"id"`

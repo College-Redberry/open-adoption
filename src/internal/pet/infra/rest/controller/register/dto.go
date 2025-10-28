@@ -8,5 +8,5 @@ type Input struct {
 }
 
 type Output struct {
-	ID string
+	ID string `json:"id"`
 }

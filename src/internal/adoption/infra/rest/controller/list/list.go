@@ -24,9 +24,13 @@ func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	output := make([]Request, len(result))
-	for _, request := range result {
-		output = append(output, Request{
+	output := Output{
+		Count: len(result),
+		Data:  make([]Request, len(result)),
+	}
+
+	for i, request := range result {
+		output.Data[i] = Request{
 			ID:                                request.ID,
 			PetID:                             request.PetID,
 			Name:                              request.Name,
@@ -44,7 +48,7 @@ func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
 			SuitableLocation:                  request.SuitableLocation,
 			AccessToTheStreet:                 request.AccessToTheStreet,
 			CreatedAt:                         request.CreatedAt,
-		})
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)
