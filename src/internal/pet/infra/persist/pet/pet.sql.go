@@ -23,6 +23,37 @@ func (q *Queries) AdoptPetById(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const countPets = `-- name: CountPets :one
+SELECT COUNT(1)
+FROM pets.pets
+WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%')
+  AND ($2::text IS NULL OR breed ILIKE '%' || $2 || '%')
+  AND ($3::text IS NULL OR age = $3)
+  AND ($4::text IS NULL OR gender = $4::pet_gender)
+  AND ($5::boolean IS NULL OR is_adopted = $5)
+`
+
+type CountPetsParams struct {
+	Name      pgtype.Text
+	Breed     pgtype.Text
+	Age       pgtype.Text
+	Gender    pgtype.Text
+	IsAdopted pgtype.Bool
+}
+
+func (q *Queries) CountPets(ctx context.Context, arg CountPetsParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countPets,
+		arg.Name,
+		arg.Breed,
+		arg.Age,
+		arg.Gender,
+		arg.IsAdopted,
+	)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createPet = `-- name: CreatePet :exec
 INSERT INTO pets.pets (
     id, name, breed, age, gender, is_adopted
@@ -117,11 +148,36 @@ func (q *Queries) ListImagesById(ctx context.Context, petID pgtype.UUID) ([]stri
 const listPets = `-- name: ListPets :many
 SELECT id, name, breed, age, gender, is_adopted
 FROM pets.pets
+WHERE ($3::text IS NULL OR name ILIKE '%' || $3 || '%')
+  AND ($4::text IS NULL OR breed ILIKE '%' || $4 || '%')
+  AND ($5::text IS NULL OR age = $5)
+  AND ($6::text IS NULL OR gender = $6::pet_gender)
+  AND ($7::boolean IS NULL OR is_adopted = $7)
 ORDER BY name
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListPets(ctx context.Context) ([]PetsPet, error) {
-	rows, err := q.db.Query(ctx, listPets)
+type ListPetsParams struct {
+	Limit     int32
+	Offset    int32
+	Name      pgtype.Text
+	Breed     pgtype.Text
+	Age       pgtype.Text
+	Gender    pgtype.Text
+	IsAdopted pgtype.Bool
+}
+
+func (q *Queries) ListPets(ctx context.Context, arg ListPetsParams) ([]PetsPet, error) {
+	rows, err := q.db.Query(ctx, listPets,
+		arg.Limit,
+		arg.Offset,
+		arg.Name,
+		arg.Breed,
+		arg.Age,
+		arg.Gender,
+		arg.IsAdopted,
+	)
 	if err != nil {
 		return nil, err
 	}

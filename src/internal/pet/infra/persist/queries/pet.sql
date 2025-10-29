@@ -26,7 +26,14 @@ WHERE id = $1;
 -- name: ListPets :many
 SELECT id, name, breed, age, gender, is_adopted
 FROM pets.pets
-ORDER BY name;
+WHERE (sqlc.narg(name)::text IS NULL OR name ILIKE '%' || sqlc.narg(name) || '%')
+  AND (sqlc.narg(breed)::text IS NULL OR breed ILIKE '%' || sqlc.narg(breed) || '%')
+  AND (sqlc.narg(age)::text IS NULL OR age = sqlc.narg(age))
+  AND (sqlc.narg(gender)::text IS NULL OR gender = sqlc.narg(gender)::pet_gender)
+  AND (sqlc.narg(is_adopted)::boolean IS NULL OR is_adopted = sqlc.narg(is_adopted))
+ORDER BY name
+LIMIT $1
+OFFSET $2;
 
 -- name: ListImagesById :many
 SELECT url
@@ -37,3 +44,12 @@ WHERE pet_id = $1;
 INSERT INTO pets.pet_images (id, pet_id, url)
 SELECT gen_random_uuid(), $1, url
 FROM unnest($2::text[]) AS url;
+
+-- name: CountPets :one
+SELECT COUNT(1)
+FROM pets.pets
+WHERE (sqlc.narg(name)::text IS NULL OR name ILIKE '%' || sqlc.narg(name) || '%')
+  AND (sqlc.narg(breed)::text IS NULL OR breed ILIKE '%' || sqlc.narg(breed) || '%')
+  AND (sqlc.narg(age)::text IS NULL OR age = sqlc.narg(age))
+  AND (sqlc.narg(gender)::text IS NULL OR gender = sqlc.narg(gender)::pet_gender)
+  AND (sqlc.narg(is_adopted)::boolean IS NULL OR is_adopted = sqlc.narg(is_adopted));

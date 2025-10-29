@@ -19,19 +19,46 @@ func New(petRepo pet.PetRepo, storageService service.Storage) *Update {
 }
 
 func (usecase *Update) Execute(input Input) (Output, error) {
-	pets, err := usecase.petRepo.List()
+	count, err := usecase.petRepo.Count(pet.Filters{
+		Name:      input.Name,
+		Breed:     input.Breed,
+		Age:       input.Age,
+		Gender:    input.Gender,
+		IsAdopted: input.IsAdopted,
+	})
+	if err != nil {
+		return Output{}, errs.ErrInternal.Wrap("failed to count pets", err)
+	}
+
+	if count == 0 {
+		return Output{}, nil
+	}
+
+	pets, err := usecase.petRepo.List(pet.Filters{
+		Name:      input.Name,
+		Breed:     input.Breed,
+		Age:       input.Age,
+		Gender:    input.Gender,
+		IsAdopted: input.IsAdopted,
+		Offset:    input.Offset,
+		Limit:     input.Limit,
+	})
 	if err != nil {
 		return Output{}, errs.ErrInternal.Wrap("failed to list pets", err)
 	}
 
-	output := make([]Pet, len(pets))
-	for _, pet := range pets {
+	output := Output{
+		Count: count,
+		Data:  make([]Pet, len(pets)),
+	}
+
+	for i, pet := range pets {
 		images, err := usecase.getPetImageById(pet.ID)
 		if err != nil {
 			return Output{}, err
 		}
 
-		output = append(output, Pet{
+		output.Data[i] = Pet{
 			ID:       pet.ID,
 			Name:     pet.Name,
 			Breed:    pet.Breed,
@@ -39,7 +66,7 @@ func (usecase *Update) Execute(input Input) (Output, error) {
 			Gender:   pet.Gender,
 			IsAdoped: pet.IsAdoped,
 			Images:   images,
-		})
+		}
 	}
 
 	return output, nil

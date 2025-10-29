@@ -6,6 +6,7 @@ import (
 
 	command "github.com/college-redberry/open-adoption/internal/pet/application/usecase"
 	usecase "github.com/college-redberry/open-adoption/internal/pet/application/usecase/list"
+	"github.com/ritwickdey/querydecoder"
 )
 
 type List struct {
@@ -19,17 +20,31 @@ func New(usecase command.Usecase[usecase.Input, usecase.Output]) *List {
 }
 
 func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
-	result, err := list.usecase.Execute(nil)
+	var queries Input
+	err := querydecoder.New(r.URL.Query()).Decode(&queries)
+	if err != nil {
+		return err
+	}
+
+	result, err := list.usecase.Execute(usecase.Input{
+		Name:      queries.Name,
+		Breed:     queries.Breed,
+		Age:       queries.Age,
+		Gender:    queries.Gender,
+		IsAdopted: queries.IsAdopted,
+		Offset:    queries.Offset,
+		Limit:     queries.Limit,
+	})
 	if err != nil {
 		return err
 	}
 
 	output := Output{
-		Count: len(result),
-		Data:  make([]Pet, len(result)),
+		Count: result.Count,
+		Data:  make([]Pet, len(result.Data)),
 	}
 
-	for i, pet := range result {
+	for i, pet := range result.Data {
 		output.Data[i] = Pet{
 			ID:        pet.ID,
 			Name:      pet.Name,

@@ -17,3 +17,13 @@ func (gender Gender) Validate() error {
 
 	return nil
 }
+
+type Filters struct {
+	Name      string
+	Breed     string
+	Age       string
+	Gender    string
+	IsAdopted *bool
+	Offset    int
+	Limit     int
+}

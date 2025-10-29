@@ -76,8 +76,31 @@ func (repo *PetRepo) GetByID(id string) (pet.Pet, error) {
 	}, nil
 }
 
-func (repo *PetRepo) List() ([]pet.Pet, error) {
-	results, err := repo.querier.ListPets(context.Background())
+func (repo *PetRepo) List(filters pet.Filters) ([]pet.Pet, error) {
+	results, err := repo.querier.ListPets(context.Background(), querier.ListPetsParams{
+		Name: pgtype.Text{
+			String: filters.Name,
+			Valid:  filters.Name != "",
+		},
+		Breed: pgtype.Text{
+			String: filters.Breed,
+			Valid:  filters.Breed != "",
+		},
+		Age: pgtype.Text{
+			String: filters.Age,
+			Valid:  filters.Age != "",
+		},
+		Gender: pgtype.Text{
+			String: filters.Gender,
+			Valid:  filters.Gender != "",
+		},
+		IsAdopted: pgtype.Bool{
+			Bool:  filters.IsAdopted != nil && *filters.IsAdopted,
+			Valid: filters.IsAdopted != nil,
+		},
+		Limit:  int32(filters.Limit),
+		Offset: int32(filters.Offset),
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -112,5 +135,30 @@ func (repo *PetRepo) SaveImagesById(id string, images []string) error {
 	return repo.querier.InsertPetImages(context.Background(), querier.InsertPetImagesParams{
 		PetID:   pgtype.UUID{Bytes: uuid.MustParse(id), Valid: true},
 		Column2: images,
+	})
+}
+
+func (repo *PetRepo) Count(filters pet.Filters) (int64, error) {
+	return repo.querier.CountPets(context.Background(), querier.CountPetsParams{
+		Name: pgtype.Text{
+			String: filters.Name,
+			Valid:  filters.Name != "",
+		},
+		Breed: pgtype.Text{
+			String: filters.Breed,
+			Valid:  filters.Breed != "",
+		},
+		Age: pgtype.Text{
+			String: filters.Age,
+			Valid:  filters.Age != "",
+		},
+		Gender: pgtype.Text{
+			String: filters.Gender,
+			Valid:  filters.Gender != "",
+		},
+		IsAdopted: pgtype.Bool{
+			Bool:  filters.IsAdopted != nil && *filters.IsAdopted,
+			Valid: filters.IsAdopted != nil,
+		},
 	})
 }
