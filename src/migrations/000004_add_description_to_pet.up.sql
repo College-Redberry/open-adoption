@@ -1,0 +1,3 @@
+ALTER TABLE pets.pets ADD COLUMN description TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE pets.pets ALTER COLUMN description DROP DEFAULT;

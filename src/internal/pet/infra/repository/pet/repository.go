@@ -23,12 +23,13 @@ func New(db querier.DBTX) *PetRepo {
 
 func (repo *PetRepo) Create(p pet.Pet) error {
 	err := repo.querier.CreatePet(context.Background(), querier.CreatePetParams{
-		ID:        uuid.MustParse(p.ID),
-		Name:      p.Name,
-		Breed:     p.Breed,
-		Age:       p.Age,
-		Gender:    querier.PetGender(p.Gender), // sqlc enum mapping
-		IsAdopted: p.IsAdoped,
+		ID:          uuid.MustParse(p.ID),
+		Name:        p.Name,
+		Breed:       p.Breed,
+		Age:         p.Age,
+		Gender:      querier.PetGender(p.Gender), // sqlc enum mapping
+		IsAdopted:   p.IsAdoped,
+		Description: p.Description,
 	})
 	if err != nil {
 		return err
@@ -39,11 +40,12 @@ func (repo *PetRepo) Create(p pet.Pet) error {
 
 func (repo *PetRepo) Update(id string, props pet.PetProps) error {
 	err := repo.querier.UpdatePet(context.Background(), querier.UpdatePetParams{
-		ID:     uuid.MustParse(id),
-		Name:   props.Name,
-		Breed:  props.Breed,
-		Age:    props.Age,
-		Gender: querier.PetGender(props.Gender),
+		ID:          uuid.MustParse(id),
+		Name:        props.Name,
+		Breed:       props.Breed,
+		Age:         props.Age,
+		Gender:      querier.PetGender(props.Gender),
+		Description: props.Description,
 	})
 	if err != nil {
 		return err
@@ -67,11 +69,12 @@ func (repo *PetRepo) GetByID(id string) (pet.Pet, error) {
 	return pet.Pet{
 		ID: result.ID.String(),
 		PetProps: pet.PetProps{
-			Name:     result.Name,
-			Breed:    result.Breed,
-			Age:      result.Age,
-			Gender:   string(result.Gender),
-			IsAdoped: result.IsAdopted,
+			Name:        result.Name,
+			Breed:       result.Breed,
+			Age:         result.Age,
+			Gender:      string(result.Gender),
+			IsAdoped:    result.IsAdopted,
+			Description: result.Description,
 		},
 	}, nil
 }
@@ -110,11 +113,12 @@ func (repo *PetRepo) List(filters pet.Filters) ([]pet.Pet, error) {
 		pets = append(pets, pet.Pet{
 			ID: r.ID.String(),
 			PetProps: pet.PetProps{
-				Name:     r.Name,
-				Breed:    r.Breed,
-				Age:      r.Age,
-				Gender:   string(r.Gender),
-				IsAdoped: r.IsAdopted,
+				Name:        r.Name,
+				Breed:       r.Breed,
+				Age:         r.Age,
+				Gender:      string(r.Gender),
+				IsAdoped:    r.IsAdopted,
+				Description: r.Description,
 			},
 		})
 	}

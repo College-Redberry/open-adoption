@@ -127,12 +127,13 @@ type AdoptionRequest struct {
 }
 
 type PetsPet struct {
-	ID        uuid.UUID
-	Name      string
-	Breed     string
-	Age       string
-	Gender    PetGender
-	IsAdopted bool
+	ID          uuid.UUID
+	Name        string
+	Breed       string
+	Age         string
+	Gender      PetGender
+	IsAdopted   bool
+	Description string
 }
 
 type PetsPetImage struct {

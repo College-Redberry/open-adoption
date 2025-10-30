@@ -56,25 +56,27 @@ func (q *Queries) CountPets(ctx context.Context, arg CountPetsParams) (int64, er
 
 const createPet = `-- name: CreatePet :exec
 INSERT INTO pets.pets (
-    id, name, breed, age, gender, is_adopted
+    id, name, description, breed, age, gender, is_adopted
 ) VALUES (
-    $1, $2, $3, $4, $5, $6
+    $1, $2, $3, $4, $5, $6, $7
 )
 `
 
 type CreatePetParams struct {
-	ID        uuid.UUID
-	Name      string
-	Breed     string
-	Age       string
-	Gender    PetGender
-	IsAdopted bool
+	ID          uuid.UUID
+	Name        string
+	Description string
+	Breed       string
+	Age         string
+	Gender      PetGender
+	IsAdopted   bool
 }
 
 func (q *Queries) CreatePet(ctx context.Context, arg CreatePetParams) error {
 	_, err := q.db.Exec(ctx, createPet,
 		arg.ID,
 		arg.Name,
+		arg.Description,
 		arg.Breed,
 		arg.Age,
 		arg.Gender,
@@ -84,17 +86,28 @@ func (q *Queries) CreatePet(ctx context.Context, arg CreatePetParams) error {
 }
 
 const getPetById = `-- name: GetPetById :one
-SELECT id, name, breed, age, gender, is_adopted
+SELECT id, name, description, breed, age, gender, is_adopted
 FROM pets.pets
 WHERE id = $1
 `
 
-func (q *Queries) GetPetById(ctx context.Context, id uuid.UUID) (PetsPet, error) {
+type GetPetByIdRow struct {
+	ID          uuid.UUID
+	Name        string
+	Description string
+	Breed       string
+	Age         string
+	Gender      PetGender
+	IsAdopted   bool
+}
+
+func (q *Queries) GetPetById(ctx context.Context, id uuid.UUID) (GetPetByIdRow, error) {
 	row := q.db.QueryRow(ctx, getPetById, id)
-	var i PetsPet
+	var i GetPetByIdRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Description,
 		&i.Breed,
 		&i.Age,
 		&i.Gender,
@@ -146,7 +159,7 @@ func (q *Queries) ListImagesById(ctx context.Context, petID pgtype.UUID) ([]stri
 }
 
 const listPets = `-- name: ListPets :many
-SELECT id, name, breed, age, gender, is_adopted
+SELECT id, name, description, breed, age, gender, is_adopted
 FROM pets.pets
 WHERE ($3::text IS NULL OR name ILIKE '%' || $3 || '%')
   AND ($4::text IS NULL OR breed ILIKE '%' || $4 || '%')
@@ -168,7 +181,17 @@ type ListPetsParams struct {
 	IsAdopted pgtype.Bool
 }
 
-func (q *Queries) ListPets(ctx context.Context, arg ListPetsParams) ([]PetsPet, error) {
+type ListPetsRow struct {
+	ID          uuid.UUID
+	Name        string
+	Description string
+	Breed       string
+	Age         string
+	Gender      PetGender
+	IsAdopted   bool
+}
+
+func (q *Queries) ListPets(ctx context.Context, arg ListPetsParams) ([]ListPetsRow, error) {
 	rows, err := q.db.Query(ctx, listPets,
 		arg.Limit,
 		arg.Offset,
@@ -182,12 +205,13 @@ func (q *Queries) ListPets(ctx context.Context, arg ListPetsParams) ([]PetsPet, 
 		return nil, err
 	}
 	defer rows.Close()
-	var items []PetsPet
+	var items []ListPetsRow
 	for rows.Next() {
-		var i PetsPet
+		var i ListPetsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
+			&i.Description,
 			&i.Breed,
 			&i.Age,
 			&i.Gender,
@@ -206,24 +230,27 @@ func (q *Queries) ListPets(ctx context.Context, arg ListPetsParams) ([]PetsPet, 
 const updatePet = `-- name: UpdatePet :exec
 UPDATE pets.pets
 SET name = $2,
-    breed = $3,
-    age = $4,
-    gender = $5
+    description = $3,
+    breed = $4,
+    age = $5,
+    gender = $6
 WHERE id = $1
 `
 
 type UpdatePetParams struct {
-	ID     uuid.UUID
-	Name   string
-	Breed  string
-	Age    string
-	Gender PetGender
+	ID          uuid.UUID
+	Name        string
+	Description string
+	Breed       string
+	Age         string
+	Gender      PetGender
 }
 
 func (q *Queries) UpdatePet(ctx context.Context, arg UpdatePetParams) error {
 	_, err := q.db.Exec(ctx, updatePet,
 		arg.ID,
 		arg.Name,
+		arg.Description,
 		arg.Breed,
 		arg.Age,
 		arg.Gender,

@@ -59,13 +59,14 @@ func (usecase *Update) Execute(input Input) (Output, error) {
 		}
 
 		output.Data[i] = Pet{
-			ID:       pet.ID,
-			Name:     pet.Name,
-			Breed:    pet.Breed,
-			Age:      pet.Age,
-			Gender:   pet.Gender,
-			IsAdoped: pet.IsAdoped,
-			Images:   images,
+			ID:          pet.ID,
+			Name:        pet.Name,
+			Description: pet.Description,
+			Breed:       pet.Breed,
+			Age:         pet.Age,
+			Gender:      pet.Gender,
+			IsAdoped:    pet.IsAdoped,
+			Images:      images,
 		}
 	}
 

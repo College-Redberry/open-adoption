@@ -22,10 +22,11 @@ func (usecase *Update) Execute(input Input) error {
 	}
 
 	err = usecase.petRepo.Update(input.ID, pet.PetProps{
-		Name:   input.Name,
-		Breed:  input.Breed,
-		Age:    input.Age,
-		Gender: input.Gender,
+		Name:        input.Name,
+		Description: input.Description,
+		Breed:       input.Breed,
+		Age:         input.Age,
+		Gender:      input.Gender,
 	})
 	if err != nil {
 		return errs.ErrInternal.Wrap("failed to update pet", err)

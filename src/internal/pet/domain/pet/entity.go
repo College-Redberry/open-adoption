@@ -3,11 +3,12 @@ package pet
 import "github.com/google/uuid"
 
 type PetProps struct {
-	Name     string
-	Breed    string
-	Age      string
-	Gender   string
-	IsAdoped bool
+	Name        string
+	Description string
+	Breed       string
+	Age         string
+	Gender      string
+	IsAdoped    bool
 }
 
 type Pet struct {

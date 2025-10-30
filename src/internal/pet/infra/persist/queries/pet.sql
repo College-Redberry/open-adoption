@@ -1,16 +1,17 @@
 -- name: CreatePet :exec
 INSERT INTO pets.pets (
-    id, name, breed, age, gender, is_adopted
+    id, name, description, breed, age, gender, is_adopted
 ) VALUES (
-    $1, $2, $3, $4, $5, $6
+    $1, $2, $3, $4, $5, $6, $7
 );
 
 -- name: UpdatePet :exec
 UPDATE pets.pets
 SET name = $2,
-    breed = $3,
-    age = $4,
-    gender = $5
+    description = $3,
+    breed = $4,
+    age = $5,
+    gender = $6
 WHERE id = $1;
 
 -- name: AdoptPetById :exec
@@ -19,12 +20,12 @@ SET is_adopted = TRUE
 WHERE id = $1;
 
 -- name: GetPetById :one
-SELECT id, name, breed, age, gender, is_adopted
+SELECT id, name, description, breed, age, gender, is_adopted
 FROM pets.pets
 WHERE id = $1;
 
 -- name: ListPets :many
-SELECT id, name, breed, age, gender, is_adopted
+SELECT id, name, description, breed, age, gender, is_adopted
 FROM pets.pets
 WHERE (sqlc.narg(name)::text IS NULL OR name ILIKE '%' || sqlc.narg(name) || '%')
   AND (sqlc.narg(breed)::text IS NULL OR breed ILIKE '%' || sqlc.narg(breed) || '%')

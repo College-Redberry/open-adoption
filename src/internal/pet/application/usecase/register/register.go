@@ -22,10 +22,11 @@ func (usecase *Register) Execute(input Input) (Output, error) {
 	}
 
 	newPet := pet.New(pet.PetProps{
-		Name:   input.Name,
-		Breed:  input.Breed,
-		Age:    input.Age,
-		Gender: input.Gender,
+		Name:        input.Name,
+		Description: input.Description,
+		Breed:       input.Breed,
+		Age:         input.Age,
+		Gender:      input.Gender,
 	})
 
 	err = usecase.petRepo.Create(newPet)

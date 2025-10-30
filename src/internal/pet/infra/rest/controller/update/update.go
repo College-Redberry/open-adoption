@@ -28,11 +28,12 @@ func (update *Update) Handle(w http.ResponseWriter, r *http.Request) error {
 	id := r.PathValue("id")
 
 	err = update.usecase.Execute(usecase.Input{
-		ID:     id,
-		Name:   body.Name,
-		Breed:  body.Breed,
-		Age:    body.Age,
-		Gender: body.Gender,
+		ID:          id,
+		Name:        body.Name,
+		Description: body.Description,
+		Breed:       body.Breed,
+		Age:         body.Age,
+		Gender:      body.Gender,
 	})
 	if err != nil {
 		return err

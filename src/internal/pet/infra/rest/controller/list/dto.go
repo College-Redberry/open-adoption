@@ -16,11 +16,12 @@ type Output struct {
 }
 
 type Pet struct {
-	ID        string   `json:"id"`
-	Name      string   `json:"name"`
-	Breed     string   `json:"breed"`
-	Age       string   `json:"age"`
-	Gender    string   `json:"gender"`
-	IsAdopted bool     `json:"is_adopted"`
-	Images    []string `json:"images"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Breed       string   `json:"breed"`
+	Age         string   `json:"age"`
+	Gender      string   `json:"gender"`
+	IsAdopted   bool     `json:"is_adopted"`
+	Images      []string `json:"images"`
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"slices"
@@ -11,7 +12,9 @@ import (
 	authDi "github.com/college-redberry/open-adoption/internal/auth/di"
 	authRoutes "github.com/college-redberry/open-adoption/internal/auth/infra/rest"
 	petDi "github.com/college-redberry/open-adoption/internal/pet/di"
+	"github.com/college-redberry/open-adoption/internal/pet/infra/constants"
 	petRoutes "github.com/college-redberry/open-adoption/internal/pet/infra/rest"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
@@ -33,21 +36,21 @@ func main() {
 
 	router := bootstrap.Bootstrap(routesV1, authContainer.AuthService)
 
-	// m, err := migrate.New("file://../../migrations", constants.DB_URL)
-	// if err != nil {
-	// 	log.Fatalf("failed to init migrate: %v", err)
-	// }
+	m, err := migrate.New("file://../../migrations", constants.DB_URL)
+	if err != nil {
+		log.Fatalf("failed to init migrate: %v", err)
+	}
 
-	// err = m.Up()
-	// if err != nil {
-	// 	if err == migrate.ErrNoChange {
-	// 		fmt.Println("No new migrations to apply.")
-	// 	} else {
-	// 		log.Fatalf("Migration failed: %v", err)
-	// 	}
-	// } else {
-	// 	fmt.Println("Migrations applied successfully!")
-	// }
+	err = m.Up()
+	if err != nil {
+		if err == migrate.ErrNoChange {
+			fmt.Println("No new migrations to apply.")
+		} else {
+			log.Fatalf("Migration failed: %v", err)
+		}
+	} else {
+		fmt.Println("Migrations applied successfully!")
+	}
 
 	log.Println("Starting server on :80")
 	http.ListenAndServe(":80", router)

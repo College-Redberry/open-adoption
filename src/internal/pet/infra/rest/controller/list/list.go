@@ -46,13 +46,14 @@ func (list *List) Handle(w http.ResponseWriter, r *http.Request) error {
 
 	for i, pet := range result.Data {
 		output.Data[i] = Pet{
-			ID:        pet.ID,
-			Name:      pet.Name,
-			Breed:     pet.Breed,
-			Age:       pet.Age,
-			Gender:    pet.Gender,
-			IsAdopted: pet.IsAdoped,
-			Images:    pet.Images,
+			ID:          pet.ID,
+			Name:        pet.Name,
+			Description: pet.Description,
+			Breed:       pet.Breed,
+			Age:         pet.Age,
+			Gender:      pet.Gender,
+			IsAdopted:   pet.IsAdoped,
+			Images:      pet.Images,
 		}
 	}
 

@@ -26,10 +26,11 @@ func (register *Register) Handle(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	result, err := register.usecase.Execute(usecase.Input{
-		Name:   body.Name,
-		Breed:  body.Breed,
-		Age:    body.Age,
-		Gender: body.Gender,
+		Name:        body.Name,
+		Description: body.Description,
+		Breed:       body.Breed,
+		Age:         body.Age,
+		Gender:      body.Gender,
 	})
 	if err != nil {
 		return err
